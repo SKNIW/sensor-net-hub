@@ -14,6 +14,9 @@ jobs:
   test-and-lint-php:
     name: Test&lint PHP codebase
     runs-on: ubuntu-20.04
+    defaults:
+      run:
+        working-directory: air-guardian
     services:
       pgsql:
         image: postgres:15
