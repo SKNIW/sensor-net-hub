@@ -1,16 +1,10 @@
-name: Test&lint PHP codebase
+sname: Test&lint PHP codebase
 
 on:
   push:
     branches: [ "main" ]
-    paths:
-      - 'air-guardian/**'
-      - 'data-sentry/**'
   pull_request:
     branches: [ "main" ]
-    paths:
-      - 'air-guardian/**'
-      - 'data-sentry/**'
 
 jobs:
   test-and-lint-php:
