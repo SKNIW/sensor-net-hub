@@ -1,0 +1,67 @@
+name: Test&lint data-sentry
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'data-sentry/**'
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - 'data-sentry/**'
+
+jobs:
+  test-and-lint-php:
+    name: Test&lint PHP codebase
+    runs-on: ubuntu-20.04
+    defaults:
+      run:
+        working-directory: data-sentry
+    services:
+      pgsql:
+        image: postgres:15
+        env:
+          POSTGRES_DB: slim
+          POSTGRES_USER: slim
+          POSTGRES_PASSWORD: password
+          PGPASSWORD: password
+        ports:
+          - 5432:5432
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Validate composer.json and composer.lock
+        run: composer validate
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-dependencies-${{ hashFiles('composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-dependencies
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.2
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, intl
+          coverage: xdebug
+
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-interaction --no-suggest
+
+      - name: Run PHP linter
+        run: composer cs:check
+
+      - name: Run PHPSTAN
+        run: composer phpstan
+
+      - name: Execute Architecture tests
+        run: |
+          composer test:architecture
+          
+      - name: Execute tests
+        run: |
+          cp .env.test .env
+          composer migrate
+          vendor/bin/phpunit --testsuite unit --log-junit junit.xml --coverage-clover clover.xml
