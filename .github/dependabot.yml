@@ -1,21 +1,21 @@
 version: 2
-
 updates:
   - package-ecosystem: composer
-    directory: "/"
+    directory: "/air-guardian"
     schedule:
       interval: monthly
       time: "07:30"
     commit-message:
-      prefix: "#2 - (php) "
+      prefix: "#2 - (php-air-guardian) "
     target-branch: main
     open-pull-requests-limit: 1
-  - package-ecosystem: npm
-    directory: "/"
+
+  - package-ecosystem: composer
+    directory: "/data-sentry"
     schedule:
       interval: monthly
       time: "07:30"
     commit-message:
-      prefix: "#2 - (npm) "
+      prefix: "#2 - (php-data-sentry) "
     target-branch: main
     open-pull-requests-limit: 1
