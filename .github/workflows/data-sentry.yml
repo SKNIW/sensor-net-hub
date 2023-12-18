@@ -1,10 +1,14 @@
-sname: Test&lint PHP codebase
+name: Test&lint data-sentry
 
 on:
   push:
     branches: [ "main" ]
+    paths:
+      - 'data-sentry/**'
   pull_request:
     branches: [ "main" ]
+    paths:
+      - 'data-sentry/**'
 
 jobs:
   test-and-lint-php:
@@ -58,12 +62,3 @@ jobs:
           cp .env.test .env
           composer migrate
           vendor/bin/phpunit --testsuite unit --log-junit junit.xml --coverage-clover clover.xml
-
-      - name: Send test coverage to codecov.io
-        uses: codecov/codecov-action@v3
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-        with:
-          files: clover.xml
-          fail_ci_if_error: true
-          verbose: true
